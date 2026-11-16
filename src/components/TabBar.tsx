@@ -76,13 +76,13 @@ function TabLabel({ label, n, focused }: { label: string; n: number; focused: bo
   useEffect(() => {
     o.value = withTiming(focused ? 1 : 0, { duration: 300, easing: ease });
   }, [focused, o]);
-  const s = useAnimatedStyle(() => ({ opacity: 0.55 + o.value * 0.45 }));
+  const s = useAnimatedStyle(() => ({ opacity: 0.8 + o.value * 0.2 }));
   return (
     <Animated.View style={[styles.label, s]}>
       <Mono size={9} color={focused ? colors.signal : colors.mute}>
         ({String(n).padStart(2, "0")})
       </Mono>
-      <Mono size={11} color={focused ? colors.paper : colors.mute} numberOfLines={1}>
+      <Mono size={11} color={focused ? colors.paper : colors.text2} numberOfLines={1}>
         {label}
       </Mono>
     </Animated.View>
