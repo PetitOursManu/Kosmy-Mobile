@@ -89,8 +89,8 @@ export function ActionButton({ status, wide }: { status: AppStatus; wide?: boole
   return (
     <Pressable
       onPress={onPress}
-      onPressIn={() => (press.value = withTiming(0.94, { duration: 120 }))}
-      onPressOut={() => (press.value = withTiming(1, { duration: 350, easing: ease }))}
+      onPressIn={() => press.set(withTiming(0.94, { duration: 120 }))}
+      onPressOut={() => press.set(withTiming(1, { duration: 350, easing: ease }))}
       disabled={!a.onPress}
       accessibilityRole="button"
       accessibilityLabel={a.kind === "progress" ? `Téléchargement ${a.label}, toucher pour annuler` : `${a.label} ${status.item.android.name}`}

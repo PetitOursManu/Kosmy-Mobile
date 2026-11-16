@@ -9,7 +9,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.webkit.CookieManager
+import android.webkit.WebStorage
 import expo.modules.kotlin.exception.CodedException
+import expo.modules.kotlin.functions.Queues
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -73,6 +76,41 @@ class KosmyInstallerModule : Module() {
       @Suppress("DEPRECATION")
       startActivity(Intent(Intent.ACTION_UNINSTALL_PACKAGE, Uri.parse("package:$packageName")))
     }
+
+    /** Écrit tout de suite sur le disque les cookies des espaces admin (Android le fait sinon un peu plus tard). */
+    AsyncFunction("flushCookies") {
+      CookieManager.getInstance().flush()
+      true
+    }.runOnQueue(Queues.MAIN)
+
+    /**
+     * Oublie la session d'un site : ses cookies (pour chaque chemin de l'adresse) et son stockage local
+     * (localStorage, IndexedDB). Renvoie le nombre de cookies effacés.
+     */
+    AsyncFunction("clearSiteData") { url: String ->
+      val uri = Uri.parse(url)
+      val host = uri.host ?: return@AsyncFunction 0
+      val origin = "${uri.scheme}://${uri.encodedAuthority}"
+      val secure = if (uri.scheme == "https") "; Secure" else ""
+      val cm = CookieManager.getInstance()
+
+      val paths = mutableListOf("/")
+      uri.pathSegments.fold("") { acc, seg -> "$acc/$seg".also { paths.add(it) } }
+
+      val names = mutableSetOf<String>()
+      for (p in paths) {
+        cm.getCookie(origin + p)?.split(";")?.forEach { c ->
+          c.substringBefore("=").trim().takeIf { it.isNotEmpty() }?.let(names::add)
+        }
+      }
+      for (name in names) for (p in paths) {
+        cm.setCookie(origin, "$name=; Max-Age=0; Path=$p$secure")
+        cm.setCookie(origin, "$name=; Max-Age=0; Path=$p; Domain=$host$secure")
+      }
+      cm.flush()
+      WebStorage.getInstance().deleteOrigin(origin)
+      names.size
+    }.runOnQueue(Queues.MAIN)
 
     /**
      * Installe un APK par une session PackageInstaller. Renvoie l'identifiant de session ;

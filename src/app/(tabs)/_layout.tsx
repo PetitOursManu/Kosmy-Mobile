@@ -12,6 +12,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" />
       <Tabs.Screen name="catalogue" />
       <Tabs.Screen name="mes-applis" />
+      <Tabs.Screen name="admin" />
     </Tabs>
   );
 }

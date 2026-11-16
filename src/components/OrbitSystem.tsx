@@ -85,14 +85,14 @@ const Satellite = memo(function Satellite({
 
   const pressIn = () => {
     setActive(true);
-    paused.value = true;
-    scale.value = withTiming(1.25, { duration: 450, easing: ease });
+    paused.set(true);
+    scale.set(withTiming(1.25, { duration: 450, easing: ease }));
     Haptics.selectionAsync().catch(() => {});
   };
   const pressOut = () => {
     setActive(false);
-    paused.value = false;
-    scale.value = withTiming(1, { duration: 500, easing: ease });
+    paused.set(false);
+    scale.set(withTiming(1, { duration: 500, easing: ease }));
   };
 
   return (

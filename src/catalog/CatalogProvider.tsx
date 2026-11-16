@@ -53,13 +53,24 @@ export function sanitize(raw: unknown): Catalog | null {
       (a.android === undefined || (isStr(a.android.package) && isStr(a.android.repo) && isStr(a.android.name))),
   );
   if (!apps.length) return null;
+  // Catalogue d'avant les espaces admin (aucune entrée « admin ») : on reprend les chemins embarqués.
+  const legacy = !apps.some((a) => a.admin !== undefined);
+  const validAdmin = (v: unknown) => {
+    const p = (v as { path?: unknown } | undefined)?.path;
+    return typeof p === "string" && p.startsWith("/") ? { path: p } : undefined;
+  };
   return {
     schema: 1,
     updated: isStr(c.updated) ? c.updated : "",
     github: isStr(c.github) ? c.github : bundled.github,
     kosmy: c.kosmy && isStr(c.kosmy.repo) && isStr(c.kosmy.package) ? c.kosmy : bundled.kosmy,
     themes,
-    apps: apps.map((a) => ({ ...a, ink: a.ink || "#0d0c0a", platforms: Array.isArray(a.platforms) ? a.platforms : [] })),
+    apps: apps.map((a) => ({
+      ...a,
+      ink: a.ink || "#0d0c0a",
+      platforms: Array.isArray(a.platforms) ? a.platforms : [],
+      admin: legacy ? validAdmin(bundled.apps.find((b) => b.id === a.id)?.admin) : validAdmin(a.admin),
+    })),
   };
 }
 

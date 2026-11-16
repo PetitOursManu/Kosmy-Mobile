@@ -21,6 +21,12 @@ export interface AndroidRelease {
   assetPattern?: string;
 }
 
+/** Espace d'administration web de l'appli, sur l'instance de chacun. */
+export interface AdminPanel {
+  /** Chemin de la page d'admin, ajouté à l'adresse de l'instance (ex. « /admin »). */
+  path: string;
+}
+
 export interface CatalogApp {
   id: string;
   n: string;
@@ -37,6 +43,7 @@ export interface CatalogApp {
   platforms: string[];
   text: Localized<{ line: string; more: string }>;
   android?: AndroidRelease;
+  admin?: AdminPanel;
 }
 
 export interface Catalog {

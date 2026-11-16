@@ -64,11 +64,11 @@ export function AppRow({ app, index }: { app: CatalogApp; index: number }) {
       <Pressable
         onPressIn={() => {
           setPressed(true);
-          p.value = withTiming(1, { duration: 450, easing: wipe });
+          p.set(withTiming(1, { duration: 450, easing: wipe }));
         }}
         onPressOut={() => {
           setPressed(false);
-          p.value = withTiming(0, { duration: 550, easing: wipe });
+          p.set(withTiming(0, { duration: 550, easing: wipe }));
         }}
         onPress={() => router.push({ pathname: "/app/[id]", params: { id: app.id } })}
         accessibilityRole="button"

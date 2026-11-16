@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { AdminProvider } from "../admin/AdminProvider";
 import { CatalogProvider } from "../catalog/CatalogProvider";
 import { PermissionSheet } from "../components/PermissionSheet";
 import { StoreProvider } from "../store/StoreProvider";
@@ -38,6 +39,7 @@ export default function RootLayout() {
     <SafeAreaProvider style={{ backgroundColor: colors.bg }}>
       <CatalogProvider>
         <StoreProvider>
+          <AdminProvider>
           <StatusBar style="light" />
           <Stack
             screenOptions={{
@@ -48,8 +50,11 @@ export default function RootLayout() {
           >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="app/[id]" options={{ animation: "fade_from_bottom" }} />
+            <Stack.Screen name="espace/[id]" options={{ animation: "fade_from_bottom" }} />
+            <Stack.Screen name="espace/edition" options={{ animation: "slide_from_bottom" }} />
           </Stack>
           <PermissionSheet />
+          </AdminProvider>
         </StoreProvider>
       </CatalogProvider>
     </SafeAreaProvider>

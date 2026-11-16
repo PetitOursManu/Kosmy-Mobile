@@ -7,6 +7,8 @@ versions Android publiées dans les releases GitHub de chaque dépôt.
 - **Accueil** : le logo Kosmy et les orbites animées, un anneau par thème.
 - **Catalogue** : l'index des applis, filtrable par thème, et une fiche par appli.
 - **Mes applis** : installer, mettre à jour, ouvrir. Un badge compte les mises à jour disponibles.
+- **Admin** : le panneau d'administration de vos instances (Kanby, Crafty, Lumy…), même pour les applis
+  qui n'existent que sur le web. On donne l'adresse de son instance, on se connecte dans la page, et Kosmy garde la session.
 
 Expo SDK 57, React Native 0.86, TypeScript, Expo Router et Reanimated, avec un petit module Kotlin
 (`modules/kosmy-installer`) pour PackageManager et PackageInstaller.
@@ -37,6 +39,15 @@ quand le nom du fichier la contient (ex. `DashyMobile-v1.0.1-arm64-v8a.apk`), si
 
 Pour que Kosmy compare bien les versions, le tag de la release (ex. `v1.5.7`) doit correspondre au
 `versionName` de l'APK (ex. `1.5.7`).
+
+Pour proposer l'appli dans l'onglet Admin, indiquez le chemin de sa page d'administration :
+
+```json
+"admin": { "path": "/admin" }
+```
+
+Kosmy l'ajoute à l'adresse que chacun donne pour son instance (ex. `https://kanby.mondomaine.fr` + `/admin`).
+On peut toujours le modifier dans Kosmy si une instance est différente.
 
 Les entrées incomplètes du catalogue sont ignorées plutôt que de casser l'application.
 Le fichier contient les textes en français et en anglais : le site pourra le lire aussi.
@@ -85,6 +96,17 @@ Android refusera d'installer les futures versions de Kosmy par-dessus l'actuelle
 4. L'installation passe par une session `PackageInstaller`. La première fois, Android demande d'autoriser Kosmy
    comme source d'applications : un écran l'explique, ouvre le bon réglage, et l'installation reprend au retour.
 5. Quand Kosmy a installé une appli elle-même, les mises à jour suivantes peuvent se faire sans confirmation (Android 12 et plus).
+
+## Espaces admin : comment ça marche
+
+- La page d'administration s'ouvre dans Kosmy (WebView), sous un bandeau qui rappelle l'instance et son adresse.
+- On se connecte dans la page, comme dans un navigateur. Kosmy ne voit pas et ne stocke pas les mots de passe :
+  la session (cookies, stockage local du site) reste dans la WebView et survit au redémarrage du téléphone.
+- « Se déconnecter » efface la session de ce site sur le téléphone ; supprimer l'instance aussi. Rien n'est touché sur le serveur.
+- Verrouillage (activé par défaut) : l'empreinte ou le code du téléphone est demandé avant d'ouvrir un espace,
+  puis à nouveau après plus d'une minute passée hors de Kosmy.
+- Les adresses `http://` sont acceptées pour les serveurs du réseau local, avec un avertissement : sur Internet,
+  le mot de passe circulerait en clair.
 
 Kosmy utilise la permission `QUERY_ALL_PACKAGES` pour savoir si une appli du catalogue est installée,
 même si elle a été ajoutée au catalogue après la sortie de Kosmy. Cette permission est restreinte sur le Play Store,

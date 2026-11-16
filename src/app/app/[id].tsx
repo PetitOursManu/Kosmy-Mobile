@@ -14,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { hostOf, useAdmin } from "../../admin/AdminProvider";
 import { useCatalog } from "../../catalog/CatalogProvider";
 import { ActionButton } from "../../components/ActionButton";
 import { AppLogo } from "../../components/AppLogo";
@@ -66,6 +67,8 @@ export default function AppDetail() {
   const { appById, themeById, catalog } = useCatalog();
   const store = useStore();
   const app = appById[id];
+  const adminCtx = useAdmin();
+  const mine = adminCtx.spaces.filter((sp) => sp.appId === id);
 
   // Le bandeau de couleur monte depuis le bas, comme le remplissage des lignes de l'index.
   const fill = useSharedValue(0);
@@ -240,6 +243,52 @@ export default function AppDetail() {
           )}
         </Animated.View>
 
+        {/* Administration */}
+        {app.admin && (
+          <Animated.View entering={fade(530)} style={[styles.panel, { marginTop: 14 }]}>
+            <Mono color={colors.signal} style={{ marginBottom: 14 }}>
+              Administration
+            </Mono>
+            {mine.length ? (
+              mine.map((sp) => (
+                <Pressable
+                  key={sp.id}
+                  onPress={async () => {
+                    if (await adminCtx.unlock()) router.push({ pathname: "/espace/[id]", params: { id: sp.id } });
+                  }}
+                  style={styles.space}
+                  accessibilityRole="button"
+                >
+                  <View style={{ flex: 1 }}>
+                    <Body size={16} weight="medium" color={colors.paper}>
+                      Ouvrir l'admin
+                    </Body>
+                    <Mono size={10} numberOfLines={1}>
+                      {hostOf(sp.base)}
+                    </Mono>
+                  </View>
+                  <Mono color={colors.signal} size={16}>
+                    →
+                  </Mono>
+                </Pressable>
+              ))
+            ) : (
+              <>
+                <Body>Gérez votre instance de {app.name} depuis Kosmy : il suffit de son adresse.</Body>
+                <Pressable
+                  onPress={() => router.push({ pathname: "/espace/edition", params: { app: app.id } })}
+                  style={{ marginTop: 14 }}
+                  accessibilityRole="button"
+                >
+                  <Body size={15} weight="semi" color={colors.signal}>
+                    Ajouter mon instance →
+                  </Body>
+                </Pressable>
+              </>
+            )}
+          </Animated.View>
+        )}
+
         {/* Dépôt */}
         <Animated.View entering={fade(560)}>
           <Pressable onPress={() => Linking.openURL(repoUrl)} style={styles.repo} accessibilityRole="link">
@@ -269,6 +318,7 @@ const styles = StyleSheet.create({
   heroMain: { flexDirection: "row", alignItems: "center", gap: 18, marginTop: 18 },
   tags: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   tag: { borderWidth: 1, borderColor: colors.lineStrong, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
+  space: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.line },
   panel: {
     marginTop: 30,
     padding: 22,

@@ -12,9 +12,10 @@ const LABELS: Record<string, string> = {
   index: "Accueil",
   catalogue: "Catalogue",
   "mes-applis": "Mes applis",
+  admin: "Admin",
 };
 
-/** Barre d'onglets façon navigation du site : « (01) Accueil », point vert sous l'onglet actif. */
+/** Barre d'onglets façon navigation du site : « (01) » au-dessus du nom, point vert sur l'onglet actif. */
 export function TabBar({ state, navigation, insets }: BottomTabBarProps) {
   const { updateCount } = useStore();
   const [widths, setWidths] = useState<number[]>([]);
@@ -78,8 +79,11 @@ function TabLabel({ label, n, focused }: { label: string; n: number; focused: bo
   const s = useAnimatedStyle(() => ({ opacity: 0.55 + o.value * 0.45 }));
   return (
     <Animated.View style={[styles.label, s]}>
-      <Mono size={11} color={focused ? colors.paper : colors.mute}>
-        ({String(n).padStart(2, "0")}) {label}
+      <Mono size={9} color={focused ? colors.signal : colors.mute}>
+        ({String(n).padStart(2, "0")})
+      </Mono>
+      <Mono size={11} color={focused ? colors.paper : colors.mute} numberOfLines={1}>
+        {label}
       </Mono>
     </Animated.View>
   );
@@ -94,9 +98,12 @@ const styles = StyleSheet.create({
     borderTopColor: colors.line,
     paddingTop: 14,
   },
-  item: { flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 6, paddingHorizontal: 6 },
-  label: {},
+  item: { flex: 1, alignItems: "center", paddingVertical: 4 },
+  label: { alignItems: "center", gap: 3 },
   badge: {
+    position: "absolute",
+    top: -4,
+    right: 6,
     minWidth: 18,
     height: 18,
     paddingHorizontal: 5,

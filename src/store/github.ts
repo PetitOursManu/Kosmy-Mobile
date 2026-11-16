@@ -44,7 +44,7 @@ export async function fetchLatestRelease(owner: string, repo: string): Promise<R
   let res: Response;
   try {
     res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/releases/latest`, { headers });
-  } catch (e) {
+  } catch {
     if (cached) return cached.release;
     throw new Error("Pas de connexion à GitHub");
   }
