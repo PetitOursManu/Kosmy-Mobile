@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "updated": "2026-11-15",
+  "github": "https://github.com/PetitOursManu",
+  "kosmy": {
+    "repo": "Kosmy-Mobile",
+    "package": "fr.kosmy.app"
+  },
+  "themes": [
+    { "id": "fun", "name": { "fr": "Divertissement", "en": "Entertainment" }, "orbit": { "radius": 98, "duration": 40, "start": 210 } },
+    { "id": "create", "name": { "fr": "Créativité", "en": "Creativity" }, "orbit": { "radius": 150, "duration": 58, "start": 120 } },
+    { "id": "docs", "name": { "fr": "Documentation", "en": "Documentation" }, "orbit": { "radius": 202, "duration": 76, "start": 25 } },
+    { "id": "work", "name": { "fr": "Productivité", "en": "Productivity" }, "orbit": { "radius": 254, "duration": 100, "start": 160 } }
+  ],
+  "apps": [
+    {
+      "id": "mocky", "n": "01", "name": "Mocky", "theme": "create",
+      "color": "#f2917c", "ink": "#1a0f0c", "tile": "#fde3da", "logo": "logos/mocky.png",
+      "repo": "Mocky", "platforms": ["Web", "Auto-hébergé", "IA"],
+      "text": {
+        "fr": { "line": "Décrivez un écran, obtenez une vraie interface.", "more": "React + Tailwind en direct sur un canevas infini · 15 fournisseurs d'IA · flyers et CV" },
+        "en": { "line": "Describe a screen, get a real interface.", "more": "Live React + Tailwind on an infinite canvas · 15 AI providers · flyers and CVs too" }
+      }
+    },
+    {
+      "id": "dashy", "n": "02", "name": "Dashy", "theme": "work",
+      "color": "#ff6b00", "ink": "#170a00", "logo": "logos/dashy.png",
+      "repo": "Dashy", "platforms": ["Web", "Android", "iOS"],
+      "text": {
+        "fr": { "line": "Le tableau de bord qui héberge et lance vos applis web.", "more": "Import HTML/zip · Store docker-compose · 2FA · assistant IA · 7 langues" },
+        "en": { "line": "The dashboard that hosts and launches your web apps.", "more": "HTML/zip import · docker-compose Store · 2FA · AI assistant · 7 languages" }
+      },
+      "android": {
+        "name": "Dashy Mobile",
+        "package": "com.anonymous.DashyApp",
+        "repo": "Dashy-Mobile"
+      }
+    },
+    {
+      "id": "soundy", "n": "03", "name": "Soundy", "theme": "fun",
+      "color": "#7c5cff", "ink": "#ffffff", "logo": "logos/soundy.png",
+      "repo": "Soundy", "platforms": ["PWA", "Android"],
+      "text": {
+        "fr": { "line": "Le lecteur de musique neumorphique pour votre serveur Emby.", "more": "Lecture hors ligne · application web installable · APK Android" },
+        "en": { "line": "The neumorphic music player for your Emby server.", "more": "Offline playback · installable web app · Android APK" }
+      },
+      "android": {
+        "name": "Soundy",
+        "package": "fr.soundy.app",
+        "repo": "Soundy"
+      }
+    },
+    {
+      "id": "lumy", "n": "04", "name": "Lumy", "theme": "docs",
+      "color": "#f1ede4", "ink": "#0f0e0c", "logo": "logos/lumy.png",
+      "repo": "Lumy", "platforms": ["Web", "npm"],
+      "text": {
+        "fr": { "line": "Une documentation légère, multilingue et interactive.", "more": "Du Markdown en entrée, un site statique rapide en sortie · quiz · recherche · MCP" },
+        "en": { "line": "Light, multilingual, interactive documentation.", "more": "Markdown in, a fast static site out · quizzes · search · MCP" }
+      }
+    },
+    {
+      "id": "kanby", "n": "05", "name": "Kanby", "theme": "work",
+      "color": "#22d3ee", "ink": "#04161a", "logo": "logos/kanby.png",
+      "repo": "Kanby", "platforms": ["Web", "Docker"],
+      "text": {
+        "fr": { "line": "Un Kanban simple, vivant et auto-hébergé.", "more": "Glisser-déposer · confettis quand c'est terminé · équipes · API" },
+        "en": { "line": "A simple, lively, self-hosted Kanban board.", "more": "Drag and drop · confetti when a task is done · teams · API" }
+      }
+    },
+    {
+      "id": "calendy", "n": "06", "name": "Calendy", "theme": "create",
+      "color": "#3b82f6", "ink": "#ffffff", "tile": "#e2ebff", "logo": "logos/calendy.png",
+      "repo": "Calendy", "platforms": ["Web", "Auto-hébergé"],
+      "text": {
+        "fr": { "line": "Le calendrier éditorial de vos réseaux sociaux.", "more": "Événements · idées à valider · planification · export Excel · MCP" },
+        "en": { "line": "The editorial calendar for your social media.", "more": "Events · ideas to approve · scheduling · Excel export · MCP" }
+      }
+    },
+    {
+      "id": "crafty", "n": "07", "name": "Crafty", "theme": "work",
+      "color": "#6d5bd0", "ink": "#ffffff", "logo": "logos/crafty.png",
+      "repo": "Crafty", "platforms": ["Web", "Auto-hébergé"],
+      "text": {
+        "fr": { "line": "Vos outils Craft derrière une connexion, avec vos fichiers.", "more": "PdfCraft, WordCraft… · dossiers, versions et quotas par compte" },
+        "en": { "line": "Your Craft tools behind a login, with your files.", "more": "PdfCraft, WordCraft… · folders, versions and quotas per account" }
+      }
+    },
+    {
+      "id": "cleardoc", "n": "08", "name": "ClearDoc", "theme": "docs",
+      "color": "#c8d2dc", "ink": "#0f1215", "tile": "#f1ede4", "logo": "logos/cleardoc.png",
+      "repo": "ClearDoc", "platforms": ["Web", "Auto-hébergé"],
+      "text": {
+        "fr": { "line": "Comprendre sa fiche de paie, ligne par ligne.", "more": "Explications classées par catégories et mots-clés · éditeur riche" },
+        "en": { "line": "Understand your payslip, line by line.", "more": "Explanations sorted by category and keyword · rich editor" }
+      }
+    }
+  ]
+}

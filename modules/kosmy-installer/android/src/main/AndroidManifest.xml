@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Installer et mettre à jour les APK publiés sur GitHub -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Proposer la désinstallation quand la signature ne correspond pas -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <!-- Voir si une appli du catalogue est installée, même ajoutée au catalogue après la sortie de Kosmy.
+         Restreinte sur le Play Store, sans conséquence pour un APK distribué sur GitHub. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <application>
+        <receiver
+            android:name="fr.kosmy.installer.InstallStatusReceiver"
+            android:exported="false" />
+    </application>
+</manifest>
