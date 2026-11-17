@@ -32,6 +32,9 @@ class InstallStatusReceiver : BroadcastReceiver() {
           InstallEvents.emit(sessionId, pkg, "failure", e.message)
           return
         }
+        // Mise à jour de Kosmy elle-même : la boîte d'Android reste affichée (dans sa propre tâche)
+        // et Kosmy passe derrière, pour qu'Android la remplace sans qu'elle soit à l'écran.
+        if (pkg == context.packageName) InstallEvents.moveToBack?.invoke()
       }
     }
 
@@ -59,6 +62,9 @@ class InstallStatusReceiver : BroadcastReceiver() {
 /** Relais entre le récepteur et le module (qui transmet au JavaScript). */
 object InstallEvents {
   var listener: ((Map<String, Any?>) -> Unit)? = null
+
+  /** Passe Kosmy en arrière-plan (fourni par le module, qui connaît l'activité). */
+  var moveToBack: (() -> Unit)? = null
 
   fun emit(sessionId: Int, pkg: String?, status: String, message: String?) {
     listener?.invoke(

@@ -31,9 +31,11 @@ class KosmyInstallerModule : Module() {
 
     OnCreate {
       InstallEvents.listener = { event -> sendEvent("onInstallStatus", event) }
+      InstallEvents.moveToBack = { appContext.currentActivity?.moveTaskToBack(true) }
     }
     OnDestroy {
       InstallEvents.listener = null
+      InstallEvents.moveToBack = null
     }
 
     /** Architectures prises en charge, de la préférée à la moins bonne (ex. arm64-v8a, armeabi-v7a). */
@@ -76,6 +78,14 @@ class KosmyInstallerModule : Module() {
       @Suppress("DEPRECATION")
       startActivity(Intent(Intent.ACTION_UNINSTALL_PACKAGE, Uri.parse("package:$packageName")))
     }
+
+    /**
+     * Passe Kosmy en arrière-plan (comme le bouton d'accueil), sans la fermer.
+     * Sert avant sa propre mise à jour : Android la remplace pendant qu'elle n'est plus à l'écran.
+     */
+    AsyncFunction("moveToBack") {
+      appContext.currentActivity?.moveTaskToBack(true) ?: false
+    }.runOnQueue(Queues.MAIN)
 
     /** Écrit tout de suite sur le disque les cookies des espaces admin (Android le fait sinon un peu plus tard). */
     AsyncFunction("flushCookies") {

@@ -181,6 +181,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (e.status === "pending_user") {
         setTask(id, { phase: "waiting_user" });
         waitingSince.current[id] = Date.now();
+        // Mise à jour de Kosmy : le module natif l'a déjà passée derrière la boîte d'Android.
         return;
       }
       delete sessions.current[e.sessionId];
@@ -245,6 +246,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setTask(id, { phase: "installing" });
         const sessionId = await Installer.install(file.uri, item.android.package);
         sessions.current[sessionId] = id;
+        // Mise à jour de Kosmy sans confirmation (Android 12+, Kosmy déjà installée par elle-même) :
+        // Kosmy passe en arrière-plan pendant qu'Android la remplace.
+        if (item.self) {
+          setTimeout(() => {
+            if (sessions.current[sessionId] === id && !waitingSince.current[id]) void Installer.moveToBack();
+          }, 2500);
+        }
       } catch (e) {
         delete downloads.current[id];
         const msg = (e as Error).message || "";
@@ -289,6 +297,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setTimeout(() => {
         for (const [sid, appId] of Object.entries(sessions.current)) {
           if (!waitingSince.current[appId]) continue;
+          // Kosmy elle-même : jamais d'abandon, son installation (87 Mo) peut durer bien plus longtemps.
+          if (itemsRef.current.find((i) => i.id === appId)?.self) continue;
           const info = Installer.getSessionInfo(Number(sid));
           if (info === null) continue;
           setTimeout(() => {
@@ -297,7 +307,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             Installer.abandonSession(Number(sid));
             delete sessions.current[Number(sid)];
             finish(appId, false, "aborted");
-          }, 6000);
+            // Assez long pour qu'une grosse appli finisse de s'installer après « Installer ».
+          }, 20000);
         }
       }, 1500);
     });

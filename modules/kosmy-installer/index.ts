@@ -43,6 +43,8 @@ declare class KosmyInstallerModule extends NativeModule<Events> {
   install(path: string, expectedPackage: string): Promise<number>;
   getSessionInfo(sessionId: number): { active: boolean; progress: number } | null;
   abandonSession(sessionId: number): boolean;
+  /** Passe Kosmy en arrière-plan (comme le bouton d'accueil), avant sa propre mise à jour. */
+  moveToBack(): Promise<boolean>;
   /** Enregistre sur le disque les cookies des pages web ouvertes dans Kosmy. */
   flushCookies(): Promise<boolean>;
   /** Efface les cookies et le stockage local d'un site (déconnexion d'un espace admin). */
