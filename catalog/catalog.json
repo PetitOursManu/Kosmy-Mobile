@@ -18,6 +18,13 @@
       "color": "#f2917c", "ink": "#1a0f0c", "tile": "#fde3da", "logo": "logos/mocky.png",
       "repo": "Mocky", "platforms": ["Web", "Auto-hébergé", "IA"],
       "admin": { "path": "/" },
+      "languages": ["fr", "en"],
+      "screenshots": [
+        { "src": "screenshots/mocky/01.webp", "w": 1600, "h": 1000, "caption": { "fr": "Décrivez votre écran", "en": "Describe your screen" } },
+        { "src": "screenshots/mocky/02.webp", "w": 1600, "h": 1000, "caption": { "fr": "Le canevas du projet", "en": "The project canvas" } },
+        { "src": "screenshots/mocky/03.webp", "w": 1600, "h": 1000, "caption": { "fr": "Vos projets", "en": "Your projects" } },
+        { "src": "screenshots/mocky/04.webp", "w": 1600, "h": 1000, "caption": { "fr": "L'administration", "en": "Administration" } }
+      ],
       "text": {
         "fr": { "line": "Décrivez un écran, obtenez une vraie interface.", "more": "React + Tailwind en direct sur un canevas infini · 15 fournisseurs d'IA · flyers et CV" },
         "en": { "line": "Describe a screen, get a real interface.", "more": "Live React + Tailwind on an infinite canvas · 15 AI providers · flyers and CVs too" }
@@ -28,9 +35,13 @@
       "color": "#ff6b00", "ink": "#170a00", "logo": "logos/dashy.png",
       "repo": "Dashy", "platforms": ["Web", "Android", "iOS"],
       "admin": { "path": "/" },
+      "languages": ["fr", "en", "es", "de", "it", "zh", "ru"],
+      "screenshots": [
+        { "src": "screenshots/dashy/01.webp", "w": 1600, "h": 840, "caption": { "fr": "Le tableau de bord", "en": "The dashboard" } }
+      ],
       "text": {
-        "fr": { "line": "Le tableau de bord qui héberge et lance vos applis web.", "more": "Import HTML/zip · Store docker-compose · 2FA · assistant IA · 7 langues" },
-        "en": { "line": "The dashboard that hosts and launches your web apps.", "more": "HTML/zip import · docker-compose Store · 2FA · AI assistant · 7 languages" }
+        "fr": { "line": "Le tableau de bord qui héberge et lance vos applis web.", "more": "Import HTML/zip · Store docker-compose · 2FA · assistant IA" },
+        "en": { "line": "The dashboard that hosts and launches your web apps.", "more": "HTML/zip import · docker-compose Store · 2FA · AI assistant" }
       },
       "android": {
         "name": "Dashy Mobile",
@@ -43,6 +54,14 @@
       "color": "#7c5cff", "ink": "#ffffff", "logo": "logos/soundy.png",
       "repo": "Soundy", "platforms": ["PWA", "Android"],
       "admin": { "path": "/settings" },
+      "languages": ["fr", "en"],
+      "screenshots": [
+        { "src": "screenshots/soundy/01.webp", "w": 540, "h": 1169, "caption": { "fr": "L'accueil", "en": "Home" } },
+        { "src": "screenshots/soundy/02.webp", "w": 540, "h": 1169, "caption": { "fr": "La bibliothèque", "en": "Library" } },
+        { "src": "screenshots/soundy/03.webp", "w": 540, "h": 1169, "caption": { "fr": "Un album", "en": "An album" } },
+        { "src": "screenshots/soundy/04.webp", "w": 540, "h": 1169, "caption": { "fr": "Le lecteur", "en": "The player" } },
+        { "src": "screenshots/soundy/05.webp", "w": 540, "h": 1169, "caption": { "fr": "Le lecteur en sombre", "en": "Player, dark mode" } }
+      ],
       "text": {
         "fr": { "line": "Le lecteur de musique neumorphique pour votre serveur Emby.", "more": "Lecture hors ligne · application web installable · APK Android" },
         "en": { "line": "The neumorphic music player for your Emby server.", "more": "Offline playback · installable web app · Android APK" }
@@ -58,6 +77,11 @@
       "color": "#f1ede4", "ink": "#0f0e0c", "logo": "logos/lumy.png",
       "repo": "Lumy", "platforms": ["Web", "npm"],
       "admin": { "path": "/_lumy/admin" },
+      "languages": ["fr", "en", "es", "de", "it", "pt"],
+      "screenshots": [
+        { "src": "screenshots/lumy/01.webp", "w": 1440, "h": 900, "caption": { "fr": "Une page de documentation", "en": "A documentation page" } },
+        { "src": "screenshots/lumy/02.webp", "w": 1440, "h": 900, "caption": { "fr": "Un site fait avec Lumy", "en": "A site built with Lumy" } }
+      ],
       "text": {
         "fr": { "line": "Une documentation légère, multilingue et interactive.", "more": "Du Markdown en entrée, un site statique rapide en sortie · quiz · recherche · MCP" },
         "en": { "line": "Light, multilingual, interactive documentation.", "more": "Markdown in, a fast static site out · quizzes · search · MCP" }
@@ -68,6 +92,13 @@
       "color": "#22d3ee", "ink": "#04161a", "logo": "logos/kanby.png",
       "repo": "Kanby", "platforms": ["Web", "Docker"],
       "admin": { "path": "/admin" },
+      "languages": ["fr", "en"],
+      "screenshots": [
+        { "src": "screenshots/kanby/01.webp", "w": 832, "h": 1800, "caption": { "fr": "Le tableau et ses tâches", "en": "The board and its tasks" } },
+        { "src": "screenshots/kanby/02.webp", "w": 832, "h": 1800, "caption": { "fr": "Le détail d'une tâche", "en": "A task in detail" } },
+        { "src": "screenshots/kanby/03.webp", "w": 832, "h": 1800, "caption": { "fr": "Tous vos tableaux", "en": "All your boards" } },
+        { "src": "screenshots/kanby/04.webp", "w": 832, "h": 1800, "caption": { "fr": "L'administration", "en": "Administration" } }
+      ],
       "text": {
         "fr": { "line": "Un Kanban simple, vivant et auto-hébergé.", "more": "Glisser-déposer · confettis quand c'est terminé · équipes · API" },
         "en": { "line": "A simple, lively, self-hosted Kanban board.", "more": "Drag and drop · confetti when a task is done · teams · API" }
@@ -78,6 +109,12 @@
       "color": "#3b82f6", "ink": "#ffffff", "tile": "#e2ebff", "logo": "logos/calendy.png",
       "repo": "Calendy", "platforms": ["Web", "Auto-hébergé"],
       "admin": { "path": "/" },
+      "screenshots": [
+        { "src": "screenshots/calendy/01.webp", "w": 832, "h": 1800, "caption": { "fr": "Le mois en un coup d'œil", "en": "The month at a glance" } },
+        { "src": "screenshots/calendy/02.webp", "w": 832, "h": 1800, "caption": { "fr": "Rédiger un post", "en": "Writing a post" } },
+        { "src": "screenshots/calendy/03.webp", "w": 832, "h": 1800, "caption": { "fr": "Les idées à valider", "en": "Ideas to approve" } },
+        { "src": "screenshots/calendy/04.webp", "w": 832, "h": 1800, "caption": { "fr": "Les événements et leurs posts", "en": "Events and their posts" } }
+      ],
       "text": {
         "fr": { "line": "Le calendrier éditorial de vos réseaux sociaux.", "more": "Événements · idées à valider · planification · export Excel · MCP" },
         "en": { "line": "The editorial calendar for your social media.", "more": "Events · ideas to approve · scheduling · Excel export · MCP" }
@@ -88,6 +125,13 @@
       "color": "#6d5bd0", "ink": "#ffffff", "logo": "logos/crafty.png",
       "repo": "Crafty", "platforms": ["Web", "Auto-hébergé"],
       "admin": { "path": "/admin.html" },
+      "languages": ["fr", "en"],
+      "screenshots": [
+        { "src": "screenshots/crafty/01.webp", "w": 832, "h": 1800, "caption": { "fr": "Choisir une appli Craft", "en": "Pick a Craft app" } },
+        { "src": "screenshots/crafty/02.webp", "w": 832, "h": 1800, "caption": { "fr": "Vos dossiers et fichiers", "en": "Your folders and files" } },
+        { "src": "screenshots/crafty/03.webp", "w": 832, "h": 1800, "caption": { "fr": "Le tableur GridCraft", "en": "The GridCraft spreadsheet" } },
+        { "src": "screenshots/crafty/04.webp", "w": 832, "h": 1800, "caption": { "fr": "Les réglages de l'admin", "en": "Admin settings" } }
+      ],
       "text": {
         "fr": { "line": "Vos outils Craft derrière une connexion, avec vos fichiers.", "more": "PdfCraft, WordCraft… · dossiers, versions et quotas par compte" },
         "en": { "line": "Your Craft tools behind a login, with your files.", "more": "PdfCraft, WordCraft… · folders, versions and quotas per account" }
@@ -98,6 +142,13 @@
       "color": "#c8d2dc", "ink": "#0f1215", "tile": "#f1ede4", "logo": "logos/cleardoc.png",
       "repo": "ClearDoc", "platforms": ["Web", "Auto-hébergé"],
       "admin": { "path": "/admin/login" },
+      "languages": ["fr", "en"],
+      "screenshots": [
+        { "src": "screenshots/cleardoc/01.webp", "w": 832, "h": 1800, "caption": { "fr": "Recherche et catégories", "en": "Search and categories" } },
+        { "src": "screenshots/cleardoc/02.webp", "w": 832, "h": 1800, "caption": { "fr": "Recherche par mot-clé", "en": "Keyword search" } },
+        { "src": "screenshots/cleardoc/03.webp", "w": 832, "h": 1800, "caption": { "fr": "Une explication détaillée", "en": "A detailed explanation" } },
+        { "src": "screenshots/cleardoc/04.webp", "w": 831, "h": 1800, "caption": { "fr": "L'éditeur de l'admin", "en": "The admin editor" } }
+      ],
       "text": {
         "fr": { "line": "Comprendre sa fiche de paie, ligne par ligne.", "more": "Explications classées par catégories et mots-clés · éditeur riche" },
         "en": { "line": "Understand your payslip, line by line.", "more": "Explanations sorted by category and keyword · rich editor" }

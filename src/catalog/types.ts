@@ -27,6 +27,15 @@ export interface AdminPanel {
   path: string;
 }
 
+/** Capture d'écran de l'appli. Les dimensions permettent de réserver la place avant le chargement. */
+export interface Screenshot {
+  /** Chemin relatif au fichier catalog.json, ou adresse https. */
+  src: string;
+  w: number;
+  h: number;
+  caption?: Localized<string>;
+}
+
 export interface CatalogApp {
   id: string;
   n: string;
@@ -44,6 +53,9 @@ export interface CatalogApp {
   text: Localized<{ line: string; more: string }>;
   android?: AndroidRelease;
   admin?: AdminPanel;
+  /** Langues de l'interface, en codes à deux lettres (« fr », « en »…). Seulement si l'appli en propose plusieurs. */
+  languages?: string[];
+  screenshots?: Screenshot[];
 }
 
 export interface Catalog {

@@ -19,6 +19,8 @@ import { useCatalog } from "../../catalog/CatalogProvider";
 import { ActionButton } from "../../components/ActionButton";
 import { AppLogo } from "../../components/AppLogo";
 import { versionLine } from "../../components/InstallRow";
+import { ReleaseNotes } from "../../components/ReleaseNotes";
+import { Screenshots } from "../../components/Screenshots";
 import { Body, Em, Mono, Serif } from "../../components/Typo";
 import { formatSize } from "../../store/github";
 import { useStore } from "../../store/StoreProvider";
@@ -26,17 +28,15 @@ import { colors, ease, gutter } from "../../theme";
 
 const fade = (d: number) => FadeInDown.duration(700).delay(d).easing(ease);
 
-/** Notes de version : on garde le texte, sans la syntaxe Markdown. */
-const plain = (md: string) =>
-  md
-    .replace(/\r/g, "")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/^#+\s*/gm, "")
-    .replace(/[*_`>]/g, "")
-    .replace(/^\s*-\s+/gm, "· ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+/** Les points forts du catalogue, séparés par « · », un par ligne. */
+const features = (more: string) =>
+  more
+    .split(/\s+·\s+/)
+    .map((f) => f.trim())
+    .filter(Boolean)
+    .map((f) => f[0].toUpperCase() + f.slice(1));
+
+const languagesLine = (langs: string[]) => `Disponible en plusieurs langues (${langs.map((l) => l.toUpperCase()).join(", ")})`;
 
 /** Couleur claire : la barre d'état passe en texte sombre. */
 const isLight = (hex: string) => {
@@ -143,11 +143,26 @@ export default function AppDetail() {
       </View>
 
       <View style={{ paddingHorizontal: gutter }}>
-        <Animated.View entering={fade(380)}>
-          <Body size={17} style={{ marginTop: 26 }}>
-            {app.text.fr.more}
-          </Body>
+        <Animated.View entering={fade(380)} style={{ marginTop: 28 }}>
+          {[...features(app.text.fr.more), ...(app.languages ? [languagesLine(app.languages)] : [])].map((f) => (
+            <View key={f} style={styles.feature}>
+              <View style={styles.featureDot} />
+              <Body size={16} style={{ flex: 1, lineHeight: 24 }}>
+                {f}
+              </Body>
+            </View>
+          ))}
         </Animated.View>
+      </View>
+
+      {app.screenshots ? (
+        <Animated.View entering={fade(420)} style={{ marginTop: 30 }}>
+          <Mono style={{ marginBottom: 12, paddingHorizontal: gutter }}>Aperçu</Mono>
+          <Screenshots shots={app.screenshots} name={app.name} />
+        </Animated.View>
+      ) : null}
+
+      <View style={{ paddingHorizontal: gutter }}>
 
         <Animated.View entering={fade(440)} style={{ marginTop: 30 }}>
           <Mono style={{ marginBottom: 12 }}>Plateformes</Mono>
@@ -217,10 +232,8 @@ export default function AppDetail() {
 
               {s.release?.notes ? (
                 <View style={{ marginTop: 22 }}>
-                  <Mono style={{ marginBottom: 10 }}>Nouveautés</Mono>
-                  <Body size={14} numberOfLines={12}>
-                    {plain(s.release.notes)}
-                  </Body>
+                  <Mono style={{ marginBottom: 14 }}>Nouveautés</Mono>
+                  <ReleaseNotes notes={s.release.notes} />
                 </View>
               ) : null}
               {apkRepoUrl && (
@@ -317,6 +330,8 @@ const styles = StyleSheet.create({
   back: { alignSelf: "flex-start", paddingVertical: 8, marginBottom: 18 },
   heroMain: { flexDirection: "row", alignItems: "center", gap: 18, marginTop: 18 },
   tags: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  feature: { flexDirection: "row", gap: 14, paddingVertical: 11, borderTopWidth: 1, borderTopColor: colors.line },
+  featureDot: { width: 6, height: 6, borderRadius: 1.5, backgroundColor: colors.signal, marginTop: 9 },
   tag: { borderWidth: 1, borderColor: colors.lineStrong, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
   space: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.line },
   panel: {

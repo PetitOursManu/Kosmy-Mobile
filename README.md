@@ -49,6 +49,27 @@ Pour proposer l'appli dans l'onglet Admin, indiquez le chemin de sa page d'admin
 Kosmy l'ajoute à l'adresse que chacun donne pour son instance (ex. `https://kanby.mondomaine.fr` + `/admin`).
 On peut toujours le modifier dans Kosmy si une instance est différente.
 
+Si l'interface existe en plusieurs langues, listez-les en codes à deux lettres. La fiche affiche
+« Disponible en plusieurs langues (FR, EN…) » :
+
+```json
+"languages": ["fr", "en", "de"]
+```
+
+Les points forts (`text.fr.more`) sont séparés par ` · ` : la fiche en affiche un par ligne.
+
+Les captures d'écran vont dans `catalog/screenshots/<appli>/`, en WebP. Indiquez leurs dimensions, pour que
+Kosmy réserve la place avant le chargement :
+
+```json
+"screenshots": [
+  { "src": "screenshots/kanby/01.webp", "w": 1170, "h": 2532, "caption": { "fr": "Le tableau", "en": "The board" } }
+]
+```
+
+`src` peut aussi être une adresse `https://`. Les captures ne sont pas embarquées dans l'APK : elles se chargent
+à l'ouverture de la fiche, puis restent en cache.
+
 Les entrées incomplètes du catalogue sont ignorées plutôt que de casser l'application.
 Le fichier contient les textes en français et en anglais : le site pourra le lire aussi.
 

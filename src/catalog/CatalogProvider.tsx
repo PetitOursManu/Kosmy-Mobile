@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 import bundledJson from "../../catalog/catalog.json";
 import { CATALOG_URL } from "../config";
-import type { Catalog, CatalogApp, Theme } from "./types";
+import type { Catalog, CatalogApp, Screenshot, Theme } from "./types";
 
 const bundled = bundledJson as Catalog;
 const CACHE_KEY = "kosmy.catalog.v1";
@@ -31,6 +31,8 @@ interface CatalogState {
   themeById: Record<string, Theme>;
   appById: Record<string, CatalogApp>;
   logo: (app: CatalogApp) => { source: ImageSource | number; placeholder?: number };
+  /** Adresse en ligne d'un fichier du catalogue (chemin relatif à catalog.json, ou déjà en https). */
+  assetUrl: (path: string) => string;
 }
 
 const Ctx = createContext<CatalogState | null>(null);
@@ -53,11 +55,24 @@ export function sanitize(raw: unknown): Catalog | null {
       (a.android === undefined || (isStr(a.android.package) && isStr(a.android.repo) && isStr(a.android.name))),
   );
   if (!apps.length) return null;
-  // Catalogue d'avant les espaces admin (aucune entrée « admin ») : on reprend les chemins embarqués.
-  const legacy = !apps.some((a) => a.admin !== undefined);
+  // Catalogue plus ancien que Kosmy (aucune appli n'a le champ) : on reprend les valeurs embarquées.
+  const older = (k: keyof CatalogApp) => !apps.some((a) => a[k] !== undefined);
+  const pick = <K extends keyof CatalogApp>(a: CatalogApp, k: K, legacy: boolean): unknown =>
+    legacy ? bundled.apps.find((b) => b.id === a.id)?.[k] : a[k];
+  const legacy = { admin: older("admin"), languages: older("languages"), screenshots: older("screenshots") };
   const validAdmin = (v: unknown) => {
     const p = (v as { path?: unknown } | undefined)?.path;
     return typeof p === "string" && p.startsWith("/") ? { path: p } : undefined;
+  };
+  const validLanguages = (v: unknown) => {
+    const l = Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && /^[a-z]{2}$/i.test(x)) : [];
+    return l.length > 1 ? l : undefined;
+  };
+  const validShots = (v: unknown) => {
+    const s = Array.isArray(v)
+      ? (v as Screenshot[]).filter((x) => isStr(x?.src) && x.w > 0 && x.h > 0 && (!x.caption || isStr(x.caption.fr)))
+      : [];
+    return s.length ? s : undefined;
   };
   return {
     schema: 1,
@@ -69,7 +84,9 @@ export function sanitize(raw: unknown): Catalog | null {
       ...a,
       ink: a.ink || "#0d0c0a",
       platforms: Array.isArray(a.platforms) ? a.platforms : [],
-      admin: legacy ? validAdmin(bundled.apps.find((b) => b.id === a.id)?.admin) : validAdmin(a.admin),
+      admin: validAdmin(pick(a, "admin", legacy.admin)),
+      languages: validLanguages(pick(a, "languages", legacy.languages)),
+      screenshots: validShots(pick(a, "screenshots", legacy.screenshots)),
     })),
   };
 }
@@ -117,7 +134,9 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CatalogState>(() => {
     const base = CATALOG_URL.slice(0, CATALOG_URL.lastIndexOf("/") + 1);
+    const assetUrl = (path: string) => (/^https?:/.test(path) ? path : base + path.replace(/^\/+/, ""));
     return {
+      assetUrl,
       catalog,
       source,
       refreshing,
@@ -127,7 +146,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       logo: (app) => {
         const local = BUNDLED_LOGOS[app.logo];
         if (source === "bundled" && local) return { source: local };
-        const remote = /^https?:/.test(app.logo) ? app.logo : base + app.logo;
+        const remote = assetUrl(app.logo);
         return { source: { uri: remote, cacheKey: remote }, placeholder: local };
       },
     };
