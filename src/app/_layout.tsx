@@ -52,6 +52,7 @@ export default function RootLayout() {
             <Stack.Screen name="app/[id]" options={{ animation: "fade_from_bottom" }} />
             <Stack.Screen name="espace/[id]" options={{ animation: "fade_from_bottom" }} />
             <Stack.Screen name="espace/edition" options={{ animation: "slide_from_bottom" }} />
+            <Stack.Screen name="board" options={{ animation: "slide_from_bottom" }} />
           </Stack>
           <PermissionSheet />
           </AdminProvider>

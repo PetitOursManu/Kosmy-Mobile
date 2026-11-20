@@ -129,6 +129,22 @@ Android refusera d'installer les futures versions de Kosmy par-dessus l'actuelle
 - Les adresses `http://` sont acceptées pour les serveurs du réseau local, avec un avertissement : sur Internet,
   le mot de passe circulerait en clair.
 
+### Synchronisation avec Kosmy Board
+
+[Kosmy Board](https://github.com/PetitOursManu/Kosmy-Board) est l'équivalent web de l'onglet Admin, avec des comptes.
+Dans l'onglet Admin, **Kosmy Board → Se connecter** (adresse du Board, e-mail, mot de passe, et code si la double
+authentification est activée) relie le téléphone au compte, une seule fois :
+
+- À la première connexion, les instances du téléphone rejoignent le compte (sans doublon), puis Kosmy reprend la liste du Board.
+- Ensuite, ajouter, modifier ou supprimer une instance le fait aussi sur le Board. La liste se met à jour au démarrage,
+  en revenant dans Kosmy (au plus toutes les 30 s) et en tirant la liste vers le bas. Sans réseau, la liste reste consultable,
+  mais les modifications sont refusées tant que le Board est injoignable.
+- Kosmy garde un jeton d'appareil dans le stockage sécurisé d'Android (`expo-secure-store`), jamais le mot de passe.
+  Il est valable un an et prolongé à chaque synchronisation. Le Board le retire si on déconnecte l'appareil
+  (**Compte → Appareils connectés**) ou si l'on change de mot de passe : Kosmy demande alors de se reconnecter.
+- Se déconnecter du Board dans Kosmy garde les instances sur le téléphone, sans synchronisation.
+- Seule la liste est synchronisée : les sessions ouvertes dans les pages d'admin restent propres à chaque appareil.
+
 Kosmy utilise la permission `QUERY_ALL_PACKAGES` pour savoir si une appli du catalogue est installée,
 même si elle a été ajoutée au catalogue après la sortie de Kosmy. Cette permission est restreinte sur le Play Store,
 sans conséquence pour un APK distribué sur GitHub.

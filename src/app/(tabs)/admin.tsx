@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Switch, View } from "react-native";
+import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, View } from "react-native";
 import Animated, { FadeInDown, LinearTransition } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -14,6 +14,16 @@ import { Body, Em, Mono, Serif } from "../../components/Typo";
 import { colors, ease, gutter } from "../../theme";
 
 const fade = (d: number) => FadeInDown.duration(800).delay(d).easing(ease);
+
+/** « à l'instant », « il y a 5 min », « il y a 2 h », « il y a 3 j ». */
+function ago(ts?: number) {
+  if (!ts) return "jamais";
+  const min = Math.round((Date.now() - ts) / 60_000);
+  if (min < 1) return "à l'instant";
+  if (min < 60) return `il y a ${min} min`;
+  const h = Math.round(min / 60);
+  return h < 24 ? `il y a ${h} h` : `il y a ${Math.round(h / 24)} j`;
+}
 
 export default function Admin() {
   const insets = useSafeAreaInsets();
@@ -32,6 +42,17 @@ export default function Admin() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingTop: insets.top + 24, paddingBottom: 40, paddingHorizontal: gutter }}
+        refreshControl={
+          admin.board ? (
+            <RefreshControl
+              refreshing={admin.syncing}
+              onRefresh={admin.sync}
+              colors={[colors.bg]}
+              progressBackgroundColor={colors.signal}
+              progressViewOffset={insets.top}
+            />
+          ) : undefined
+        }
       >
         <Animated.View entering={fade(0)}>
           <Mono style={{ marginBottom: 14 }}>(04) — Vos instances</Mono>
@@ -94,6 +115,10 @@ export default function Admin() {
           )
         )}
 
+        <Animated.View entering={fade(220)}>
+          <BoardSection />
+        </Animated.View>
+
         <Animated.View entering={fade(260)} style={styles.lock}>
           <View style={{ flex: 1 }}>
             <Mono color={colors.paper}>Verrouillage</Mono>
@@ -120,6 +145,91 @@ export default function Admin() {
         </Mono>
       </ScrollView>
       <StatusScrim />
+    </View>
+  );
+}
+
+/** Kosmy Board : se connecter une fois, puis les espaces sont les mêmes ici et sur le Board. */
+function BoardSection() {
+  const admin = useAdmin();
+  const b = admin.board;
+
+  const confirmUnlink = () =>
+    Alert.alert(
+      "Se déconnecter du Board ?",
+      "Les espaces restent sur ce téléphone, mais ne seront plus synchronisés avec votre Kosmy Board.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Se déconnecter",
+          style: "destructive",
+          onPress: () => {
+            admin.unlinkBoard();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          },
+        },
+      ],
+    );
+
+  if (!b) {
+    return (
+      <View style={styles.board}>
+        <Mono color={colors.paper}>Kosmy Board</Mono>
+        <Body size={14} style={{ marginTop: 6 }}>
+          Retrouvez ici les instances déjà ajoutées sur votre Kosmy Board, et inversement. Vous ne vous connectez qu'une fois.
+        </Body>
+        {admin.syncError && (
+          <Body size={13} color={colors.danger} style={{ marginTop: 8 }}>
+            {admin.syncError}
+          </Body>
+        )}
+        <Pressable
+          onPress={() => router.push("/board")}
+          style={({ pressed }) => [styles.outline, pressed && { opacity: 0.7 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Se connecter à Kosmy Board"
+        >
+          <Body weight="semi" size={14} color={colors.paper}>
+            Se connecter →
+          </Body>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.board}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View style={[styles.dot, { backgroundColor: admin.syncError ? colors.danger : colors.signal }]} />
+        <Mono color={colors.paper}>Kosmy Board · Synchronisé</Mono>
+      </View>
+      <Body size={14} color={colors.paper} style={{ marginTop: 8 }} numberOfLines={1}>
+        {b.user.name} · {b.user.email}
+      </Body>
+      <Mono size={10} numberOfLines={1} style={{ marginTop: 4 }}>
+        {hostOf(b.url)} · {admin.syncing ? "synchronisation…" : `mis à jour ${ago(b.syncedAt)}`}
+      </Mono>
+      {admin.syncError && (
+        <Body size={13} color={colors.danger} style={{ marginTop: 8 }}>
+          {admin.syncError}
+        </Body>
+      )}
+      <View style={styles.boardActions}>
+        <Pressable
+          onPress={() => {
+            Haptics.selectionAsync().catch(() => {});
+            admin.sync();
+          }}
+          disabled={admin.syncing}
+          hitSlop={8}
+          accessibilityRole="button"
+        >
+          <Mono color={colors.signal}>Synchroniser</Mono>
+        </Pressable>
+        <Pressable onPress={confirmUnlink} hitSlop={8} accessibilityRole="button">
+          <Mono>Se déconnecter</Mono>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -176,6 +286,18 @@ const styles = StyleSheet.create({
   empty: { marginTop: 34, borderWidth: 1, borderColor: colors.line, borderRadius: 20, padding: 20, backgroundColor: colors.panel },
   quick: { flexDirection: "row", flexWrap: "wrap", gap: 14, marginTop: 18 },
   quickItem: { width: 58, alignItems: "center", gap: 6 },
+  board: { marginTop: 34, borderWidth: 1, borderColor: colors.line, borderRadius: 20, padding: 20, backgroundColor: colors.panel },
+  boardActions: { flexDirection: "row", gap: 24, marginTop: 16 },
+  dot: { width: 7, height: 7, borderRadius: 4 },
+  outline: {
+    marginTop: 16,
+    height: 44,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.lineStrong,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   lock: {
     marginTop: 34,
     flexDirection: "row",

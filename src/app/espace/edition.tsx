@@ -1,16 +1,18 @@
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, TextInput, View, type TextInputProps } from "react-native";
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { isCleartext, normalizeBase, spaceUrl, useAdmin } from "../../admin/AdminProvider";
+import { boardMessage } from "../../admin/board";
 import { SpaceLogo } from "../../admin/SpaceLogo";
 import { useCatalog } from "../../catalog/CatalogProvider";
 import { AppLogo } from "../../components/AppLogo";
+import { Field } from "../../components/Field";
 import { Body, Em, Mono, Serif } from "../../components/Typo";
-import { colors, ease, fonts, gutter } from "../../theme";
+import { colors, ease, gutter } from "../../theme";
 
 const fade = (d: number) => FadeInDown.duration(600).delay(d).easing(ease);
 const OTHER = "__other";
@@ -29,35 +31,6 @@ async function reachable(url: string) {
   }
 }
 
-function Field({ label, hint, ...p }: TextInputProps & { label: string; hint?: string }) {
-  const [focus, setFocus] = useState(false);
-  return (
-    <View style={{ marginTop: 22 }}>
-      <Mono color={focus ? colors.signal : colors.mute}>{label}</Mono>
-      <TextInput
-        placeholderTextColor="rgba(241,237,228,0.32)"
-        selectionColor={colors.signal}
-        cursorColor={colors.signal}
-        {...p}
-        onFocus={(e) => {
-          setFocus(true);
-          p.onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setFocus(false);
-          p.onBlur?.(e);
-        }}
-        style={[styles.input, focus && { borderBottomColor: colors.signal }]}
-      />
-      {hint ? (
-        <Body size={13} color={colors.mute} style={{ marginTop: 6 }}>
-          {hint}
-        </Body>
-      ) : null}
-    </View>
-  );
-}
-
 export default function Edition() {
   const params = useLocalSearchParams<{ id?: string; app?: string }>();
   const insets = useSafeAreaInsets();
@@ -74,7 +47,7 @@ export default function Edition() {
   const [path, setPath] = useState(editing?.path ?? "");
   const [error, setError] = useState<string | null>(null);
   const [unreachable, setUnreachable] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<false | "check" | "save">(false);
 
   const adminPath = path.trim() || app?.admin?.path || "/";
   const preview = useMemo(() => {
@@ -100,7 +73,7 @@ export default function Edition() {
 
     // Première tentative : on vérifie que l'adresse répond. La seconde enregistre quand même.
     if (!unreachable) {
-      setBusy(true);
+      setBusy("check");
       const ok = await reachable(spaceUrl(input));
       setBusy(false);
       if (!ok) {
@@ -109,14 +82,23 @@ export default function Edition() {
         return;
       }
     }
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    if (editing) {
-      await admin.update(editing.id, input);
-      router.back();
-    } else {
-      const s = await admin.add(input);
-      if (await admin.unlock()) router.replace({ pathname: "/espace/[id]", params: { id: s.id } });
-      else router.back();
+    setBusy("save");
+    try {
+      if (editing) {
+        await admin.update(editing.id, input);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        router.back();
+      } else {
+        const s = await admin.add(input);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        if (await admin.unlock()) router.replace({ pathname: "/espace/[id]", params: { id: s.id } });
+        else router.back();
+      }
+    } catch (e) {
+      // Téléphone relié à Kosmy Board, qui a refusé ou n'a pas répondu : rien n'est changé.
+      setBusy(false);
+      setError(boardMessage(e));
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
     }
   };
 
@@ -124,15 +106,21 @@ export default function Edition() {
     if (!editing) return;
     Alert.alert(
       `Supprimer ${editing.name} ?`,
-      "L'instance disparaît de Kosmy, et sa session est effacée de ce téléphone. Rien n'est supprimé sur le serveur.",
+      admin.board
+        ? "L'instance disparaît de Kosmy et de votre Kosmy Board, et sa session est effacée de ce téléphone. Rien n'est supprimé sur le serveur de l'appli."
+        : "L'instance disparaît de Kosmy, et sa session est effacée de ce téléphone. Rien n'est supprimé sur le serveur.",
       [
         { text: "Annuler", style: "cancel" },
         {
           text: "Supprimer",
           style: "destructive",
           onPress: async () => {
-            await admin.remove(editing.id);
-            router.back();
+            try {
+              await admin.remove(editing.id);
+              router.back();
+            } catch (e) {
+              setError(boardMessage(e));
+            }
           },
         },
       ],
@@ -307,12 +295,12 @@ export default function Edition() {
 
             <Pressable
               onPress={save}
-              disabled={busy}
-              style={({ pressed }) => [styles.cta, (pressed || busy) && { opacity: 0.8 }]}
+              disabled={!!busy}
+              style={({ pressed }) => [styles.cta, (pressed || !!busy) && { opacity: 0.8 }]}
               accessibilityRole="button"
             >
               <Body weight="semi" size={15} color={colors.bg}>
-                {busy ? "Vérification de l'adresse…" : unreachable ? "Enregistrer quand même" : editing ? "Enregistrer" : "Ajouter et ouvrir →"}
+                {busy === "save" ? "Enregistrement…" : busy ? "Vérification de l'adresse…" : unreachable ? "Enregistrer quand même" : editing ? "Enregistrer" : "Ajouter et ouvrir →"}
               </Body>
             </Pressable>
 
@@ -328,7 +316,7 @@ export default function Edition() {
                   <Body weight="medium" size={15} color={colors.danger}>
                     Supprimer l'instance
                   </Body>
-                  <Mono size={10}>Rien n'est supprimé sur le serveur</Mono>
+                  <Mono size={10}>{admin.board ? "Retirée aussi de votre Kosmy Board" : "Rien n'est supprimé sur le serveur"}</Mono>
                 </Pressable>
               </View>
             )}
@@ -352,15 +340,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: colors.panel,
-  },
-  input: {
-    fontFamily: fonts.sans,
-    fontSize: 18,
-    color: colors.paper,
-    paddingVertical: 10,
-    paddingHorizontal: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lineStrong,
   },
   preview: { marginTop: 22, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: colors.signal },
   cta: { marginTop: 28, height: 54, borderRadius: 999, backgroundColor: colors.signal, alignItems: "center", justifyContent: "center" },
