@@ -78,7 +78,8 @@ export default function Admin() {
         </Animated.View>
 
         {spaces.length > 0 ? (
-          <Animated.View entering={fade(160)} style={{ marginTop: 34 }}>
+          // Des clés différentes : sinon la liste réutilise la vue de la carte vide et en garde le cadre (bordure, fond).
+          <Animated.View key="list" entering={fade(160)} style={{ marginTop: 34 }}>
             <Mono style={{ marginBottom: 6 }}>Instances ({spaces.length})</Mono>
             <View style={{ borderBottomWidth: 1, borderBottomColor: colors.line }}>
               {spaces.map((s, i) => (
@@ -90,7 +91,7 @@ export default function Admin() {
           </Animated.View>
         ) : (
           admin.ready && (
-            <Animated.View entering={fade(160)} style={styles.empty}>
+            <Animated.View key="empty" entering={fade(160)} style={styles.empty}>
               <Mono color={colors.paper}>Aucune instance pour l'instant</Mono>
               <Body size={14} style={{ marginTop: 8 }}>
                 Choisissez une appli, puis donnez l'adresse où vous l'hébergez.
@@ -207,7 +208,10 @@ function BoardSection() {
         {b.user.name} · {b.user.email}
       </Body>
       <Mono size={10} numberOfLines={1} style={{ marginTop: 4 }}>
-        {hostOf(b.url)} · {admin.syncing ? "synchronisation…" : `mis à jour ${ago(b.syncedAt)}`}
+        {hostOf(b.url)}
+      </Mono>
+      <Mono size={10} numberOfLines={1} style={{ marginTop: 4 }}>
+        {admin.syncing ? "Synchronisation…" : `Mis à jour ${ago(b.syncedAt)}`}
       </Mono>
       {admin.syncError && (
         <Body size={13} color={colors.danger} style={{ marginTop: 8 }}>

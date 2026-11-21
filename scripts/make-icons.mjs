@@ -57,7 +57,9 @@ await onCanvas(1024, 860, { ...BG, alpha: 1 }, "assets/icon.png");
 await onCanvas(196, 164, { ...BG, alpha: 1 }, "assets/favicon.png");
 
 // Image de démarrage et logo pour l'interface (transparents).
-await onCanvas(1024, 1024, clear, "assets/splash-icon.png");
+// Android 12+ découpe l'icône de démarrage en cercle de 2/3 de sa largeur : le dessin (anneau compris)
+// va jusqu'à 0,57 × sa taille depuis le centre, donc 630 px sur 1024 le gardent dans le cercle de 341 px.
+await onCanvas(1024, 630, clear, "assets/splash-icon.png");
 await sharp(crop).resize(720, 720).png().toFile("assets/brand/kosmy-mark.png");
 
 console.log("Icônes générées.");
