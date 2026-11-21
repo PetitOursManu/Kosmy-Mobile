@@ -12,6 +12,12 @@ import { SpaceLogo } from "../../admin/SpaceLogo";
 import { Body, Em, Mono, Serif } from "../../components/Typo";
 import { colors, ease, gutter } from "../../theme";
 
+/** L'adresse est-elle sur l'instance elle-même (même schéma, hôte et port) ? */
+function sameOrigin(url: string, base: string) {
+  const origin = (u: string) => u.match(/^(https?:\/\/[^/?#]+)/i)?.[1].toLowerCase();
+  return Boolean(origin(url)) && origin(url) === origin(base);
+}
+
 /** Schémas que la WebView sait ouvrir elle-même ; le reste (mailto:, tel:, intent:…) part vers Android. */
 const WEB = /^(https?|about|data|blob|javascript):/i;
 
@@ -28,7 +34,8 @@ const ERRORS: Record<string, string> = {
 };
 
 export default function Espace() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  // « url » : une page précise de l'instance (le lien d'une notification), sinon sa page d'admin.
+  const { id, url: target } = useLocalSearchParams<{ id: string; url?: string }>();
   const insets = useSafeAreaInsets();
   const admin = useAdmin();
   const space = admin.spaces.find((s) => s.id === id);
@@ -91,7 +98,7 @@ export default function Espace() {
     );
   }
 
-  const url = spaceUrl(space);
+  const url = target && sameOrigin(target, space.base) ? target : spaceUrl(space);
   const current = nav.url || url;
   const clear = isCleartext(current);
   const elsewhere = hostOf(current) !== hostOf(url);

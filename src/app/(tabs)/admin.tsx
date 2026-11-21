@@ -10,6 +10,7 @@ import { useCatalog } from "../../catalog/CatalogProvider";
 import { AppLogo } from "../../components/AppLogo";
 import { rowEntering } from "../../components/AppRow";
 import { StatusScrim } from "../../components/Decor";
+import { useBoardNotifications } from "../../notifications/NotificationsProvider";
 import { Body, Em, Mono, Serif } from "../../components/Typo";
 import { colors, ease, gutter } from "../../theme";
 
@@ -153,6 +154,7 @@ export default function Admin() {
 /** Kosmy Board : se connecter une fois, puis les espaces sont les mêmes ici et sur le Board. */
 function BoardSection() {
   const admin = useAdmin();
+  const notif = useBoardNotifications();
   const b = admin.board;
 
   const confirmUnlink = () =>
@@ -217,6 +219,33 @@ function BoardSection() {
         <Body size={13} color={colors.danger} style={{ marginTop: 8 }}>
           {admin.syncError}
         </Body>
+      )}
+      <Pressable
+        onPress={() => router.push("/notifications")}
+        style={({ pressed }) => [styles.notifRow, pressed && { opacity: 0.7 }]}
+        accessibilityRole="button"
+        accessibilityLabel={notif.unread ? `Notifications, ${notif.unread} non lues` : "Notifications"}
+      >
+        <Body weight="semi" size={14} color={colors.paper} style={{ flex: 1 }}>
+          Notifications
+        </Body>
+        {notif.unread ? (
+          <View style={styles.badge}>
+            <Mono size={10} color={colors.bg} weight="medium">
+              {notif.unread > 99 ? "99+" : notif.unread}
+            </Mono>
+          </View>
+        ) : null}
+        <Mono color={colors.signal} size={16}>
+          →
+        </Mono>
+      </Pressable>
+      {notif.permission !== "granted" && (
+        <Pressable onPress={notif.enable} hitSlop={8} style={{ marginTop: 10 }} accessibilityRole="button">
+          <Mono color={colors.danger}>
+            {notif.permission === "denied" ? "Notifications bloquées · ouvrir les réglages" : "Autoriser les notifications sur ce téléphone"}
+          </Mono>
+        </Pressable>
       )}
       <View style={styles.boardActions}>
         <Pressable
@@ -293,6 +322,18 @@ const styles = StyleSheet.create({
   board: { marginTop: 34, borderWidth: 1, borderColor: colors.line, borderRadius: 20, padding: 20, backgroundColor: colors.panel },
   boardActions: { flexDirection: "row", gap: 24, marginTop: 16 },
   dot: { width: 7, height: 7, borderRadius: 4 },
+  notifRow: {
+    marginTop: 16,
+    height: 48,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.lineStrong,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  badge: { minWidth: 22, height: 22, paddingHorizontal: 6, borderRadius: 11, backgroundColor: colors.signal, alignItems: "center", justifyContent: "center" },
   outline: {
     marginTop: 16,
     height: 44,
