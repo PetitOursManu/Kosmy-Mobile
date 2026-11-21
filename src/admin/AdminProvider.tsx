@@ -6,6 +6,7 @@ import { AppState } from "react-native";
 
 import Installer from "../../modules/kosmy-installer";
 import { BoardError, boardApi, boardMessage, type BoardUser } from "./board";
+import { BOARD_KEY, TOKEN_KEY } from "./keys";
 
 /**
  * Un espace admin : l'adresse de l'instance d'une appli (souvent auto-hébergée), ouverte dans Kosmy.
@@ -39,8 +40,6 @@ export interface BoardLink {
 
 const SPACES_KEY = "kosmy.admin.v1";
 const LOCK_KEY = "kosmy.admin.lock.v1";
-const BOARD_KEY = "kosmy.board.v1";
-const TOKEN_KEY = "kosmy.board.token";
 /** Après ce délai hors de Kosmy, il faut se déverrouiller à nouveau. */
 const GRACE_MS = 60_000;
 /** Au retour dans Kosmy, on ne resynchronise pas plus souvent. */

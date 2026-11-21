@@ -11,6 +11,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AdminProvider } from "../admin/AdminProvider";
 import { CatalogProvider } from "../catalog/CatalogProvider";
+// Définit la tâche de fond des notifications dès le chargement (Android peut la lancer appli fermée).
+import "../notifications/board-notifications";
+import { NotificationsProvider } from "../notifications/NotificationsProvider";
 import { PermissionSheet } from "../components/PermissionSheet";
 import { StoreProvider } from "../store/StoreProvider";
 import { colors } from "../theme";
@@ -40,6 +43,7 @@ export default function RootLayout() {
       <CatalogProvider>
         <StoreProvider>
           <AdminProvider>
+          <NotificationsProvider>
           <StatusBar style="light" />
           <Stack
             screenOptions={{
@@ -53,8 +57,10 @@ export default function RootLayout() {
             <Stack.Screen name="espace/[id]" options={{ animation: "fade_from_bottom" }} />
             <Stack.Screen name="espace/edition" options={{ animation: "slide_from_bottom" }} />
             <Stack.Screen name="board" options={{ animation: "slide_from_bottom" }} />
+            <Stack.Screen name="notifications" />
           </Stack>
           <PermissionSheet />
+          </NotificationsProvider>
           </AdminProvider>
         </StoreProvider>
       </CatalogProvider>

@@ -145,6 +145,22 @@ authentification est activée) relie le téléphone au compte, une seule fois :
 - Se déconnecter du Board dans Kosmy garde les instances sur le téléphone, sans synchronisation.
 - Seule la liste est synchronisée : les sessions ouvertes dans les pages d'admin restent propres à chaque appareil.
 
+### Notifications de Kosmy Board
+
+Les applis reliées à Kosmy Board (Soundy : une nouvelle demande de musique) envoient leurs notifications au Board.
+Une fois le téléphone relié au Board, Kosmy les affiche comme des notifications Android, **sans service Google** :
+
+- Kosmy demande au Board s'il y a du nouveau (`GET /api/notifications?after=…`, avec le jeton d'appareil) :
+  à l'ouverture, au retour dans l'appli, puis toutes les minutes tant qu'elle est ouverte ;
+  appli fermée, par une tâche de fond d'Android (`expo-background-task`), **au mieux toutes les 15 minutes**.
+  Android peut l'espacer davantage quand le téléphone est en veille ou en économie de batterie : pour être prévenu
+  plus régulièrement, désactivez l'optimisation de batterie pour Kosmy dans les réglages d'Android.
+- L'autorisation d'afficher des notifications est demandée en reliant le Board (Android 13 et plus).
+  Elles arrivent dans le canal « Kosmy Board », réglable dans les réglages d'Android.
+- Toucher une notification ouvre l'écran **Notifications** (aussi depuis l'onglet Admin → Kosmy Board) ;
+  toucher une notification de la liste ouvre la page concernée dans l'espace admin de l'instance.
+- Les anciennes notifications ne sont pas réaffichées en reliant le Board : seules les nouvelles déclenchent une alerte.
+
 Kosmy utilise la permission `QUERY_ALL_PACKAGES` pour savoir si une appli du catalogue est installée,
 même si elle a été ajoutée au catalogue après la sortie de Kosmy. Cette permission est restreinte sur le Play Store,
 sans conséquence pour un APK distribué sur GitHub.
